@@ -1,0 +1,4 @@
+body{margin:0;font-family:sans-serif;background:#FFF8E1}
+header{background:#3E2723;color:white;padding:20px;text-align:center}
+#products{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:15px}
+.product{background:white;padding:12px;border-radius:12px;text-align:center}
