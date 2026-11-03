@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b3d3a">
+<title>AndesTrade AI – Your AI-Powered Global Trade Department</title>
+<style>
+  :root{
+    --ink:#10201f;
+    --muted:#5b6b6a;
+    --bg:#f4f7f6;
+    --card:#ffffff;
+    --brand:#0f766e;
+    --brand-dark:#0b3d3a;
+    --accent:#f59e0b;
+    --line:#dbe5e3;
+    --danger:#d62828;
+    --ok:#15803d;
+    --radius:16px;
+    --shadow:0 10px 30px rgba(11,61,58,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.5;min-height:100vh;
+  }
+  .screen{display:none;min-height:100vh;width:100%}
+  .screen.active{display:block;animation:fadeUp .45s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* Buttons */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    border:0;cursor:pointer;font:inherit;font-weight:700;
+    padding:.95rem 1.6rem;border-radius:999px;transition:transform .15s,box-shadow .15s,background .15s;
+    min-height:48px;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:var(--accent);color:#1b1300;box-shadow:0 8px 20px rgba(245,158,11,.35)}
+  .btn-primary:hover{background:#fbb02d}
+  .btn-brand{background:var(--brand);color:#fff;box-shadow:0 8px 20px rgba(15,118,110,.3)}
+  .btn-brand:hover{background:#0d6a63}
+  .btn-ghost{background:#fff;color:var(--brand-dark);border:2px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--brand)}
+  .btn-lg{font-size:1.15rem;padding:1.1rem 2.2rem}
+  .btn:focus-visible,input:focus-visible{outline:3px solid rgba(15,118,110,.45);outline-offset:2px}
+
+  /* Logo */
+  .logo{display:inline-flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em}
+  .logo-mark{
+    width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--accent),#ef6c00);color:#fff;
+  }
+  .logo-mark svg{width:24px;height:24px}
+
+  /* Screen 1 – Hero */
+  #screen-welcome{
+    background:
+      radial-gradient(900px 500px at 85% -10%,rgba(245,158,11,.25),transparent 60%),
+      radial-gradient(700px 500px at -10% 110%,rgba(45,212,191,.22),transparent 60%),
+      linear-gradient(160deg,#0b3d3a 0%,#0f5a55 55%,#0f766e 100%);
+    color:#fff;
+  }
+  .hero{
+    max-width:960px;margin:0 auto;min-height:100vh;padding:1.5rem 1.25rem 2.5rem;
+    display:flex;flex-direction:column;
+  }
+  .hero .logo{font-size:1.3rem;color:#fff}
+  .hero-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1.4rem;padding:2rem 0}
+  .eyebrow{
+    align-self:flex-start;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+    padding:.4rem .8rem;border-radius:999px;color:#bff3ea;
+  }
+  .hero h1{font-size:clamp(2.2rem,8vw,4rem);line-height:1.08;letter-spacing:-.03em;font-weight:800}
+  .hero h1 span{color:var(--accent)}
+  .hero .tagline{font-size:clamp(1.05rem,3.4vw,1.4rem);color:#d6efeb;max-width:34ch}
+  .hero .sub{color:#a9d4ce;max-width:52ch;font-size:1rem}
+  .hero-cta{display:flex;flex-direction:column;gap:.9rem;align-items:flex-start;margin-top:.5rem}
+  .hero-points{display:grid;gap:.75rem;grid-template-columns:1fr;margin-top:1rem}
+  .hero-points div{
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+    border-radius:14px;padding:.9rem 1rem;font-size:.95rem;color:#e4f6f3;
+  }
+  .hero-points b{display:block;color:#fff}
+  @media(min-width:700px){
+    .hero{padding:2rem 2rem 3rem}
+    .hero-cta{flex-direction:row;align-items:center}
+    .hero-points{grid-template-columns:repeat(3,1fr)}
+  }
+
+  /* Shared header + page container */
+  .topbar{
+    background:#fff;border-bottom:1px solid var(--line);padding:.8rem 1.25rem;
+    display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;
+  }
+  .topbar .logo{font-size:1.05rem;color:var(--brand-dark)}
+  .topbar .logo-mark{width:34px;height:34px;border-radius:10px}
+  .step{font-size:.8rem;color:var(--muted);font-weight:600}
+  .page{max-width:720px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.4rem}
+  .page h2{font-size:clamp(1.5rem,5vw,2rem);letter-spacing:-.02em;line-height:1.2}
+  .lead{color:var(--muted);margin:.4rem 0 1.4rem}
+
+  /* Screen 2 – Form */
+  .field{margin-bottom:1.1rem}
+  label{display:block;font-weight:700;font-size:.92rem;margin-bottom:.4rem}
+  input[type=text]{
+    width:100%;font:inherit;font-size:1rem;padding:.9rem 1rem;border:2px solid var(--line);
+    border-radius:12px;background:#fbfdfc;transition:border-color .15s,background .15s;min-height:50px;
+  }
+  input[type=text]:focus{border-color:var(--brand);background:#fff;outline:none}
+  input.invalid{border-color:var(--danger);background:#fff6f6}
+  .error{
+    color:var(--danger);font-weight:600;font-size:.95rem;margin:0 0 1rem;
+    background:#fff1f1;border:1px solid #f5c2c2;padding:.7rem .9rem;border-radius:10px;display:none;
+  }
+  .error.show{display:block;animation:shake .35s}
+  @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .form-actions{display:flex;flex-direction:column;gap:.7rem;margin-top:.5rem}
+  .form-actions .btn{width:100%}
+  .back-link{
+    background:none;border:0;color:var(--brand);font:inherit;font-weight:600;cursor:pointer;
+    padding:.4rem 0;margin-bottom:.6rem;
+  }
+
+  /* Screen 3 – Processing */
+  #screen-processing{
+    background:linear-gradient(160deg,#0b3d3a,#0f766e);color:#fff;
+  }
+  .proc{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:2rem 1.5rem;gap:1.2rem;
+  }
+  .spinner{
+    width:84px;height:84px;border-radius:50%;
+    border:7px solid rgba(255,255,255,.2);border-top-color:var(--accent);
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .proc h2{font-size:clamp(1.4rem,5vw,2rem);min-height:2.6em;display:flex;align-items:center}
+  .proc p{color:#bfe8e2;max-width:36ch}
+  .progress{width:min(380px,85vw);height:12px;background:rgba(255,255,255,.18);border-radius:999px;overflow:hidden}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fde68a);border-radius:999px}
+  .proc-steps{list-style:none;display:grid;gap:.35rem;font-size:.92rem;color:#a9d4ce;margin-top:.4rem}
+  .proc-steps li{opacity:.4;transition:opacity .4s}
+  .proc-steps li.on{opacity:1;color:#fff}
+
+  /* Screen 4 – Report */
+  .report-head{display:flex;flex-direction:column;gap:.2rem;margin-bottom:1rem}
+  .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:.6rem 0 1.2rem}
+  .chip{
+    background:#e6f4f1;color:var(--brand-dark);font-size:.82rem;font-weight:600;
+    padding:.35rem .75rem;border-radius:999px;
+  }
+  .score-card{
+    background:linear-gradient(135deg,#0b3d3a,#0f766e);color:#fff;border-radius:var(--radius);
+    padding:1.4rem;margin-bottom:1rem;box-shadow:var(--shadow);
+  }
+  .score-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .score-top span{font-weight:600;color:#bfe8e2}
+  .score-num{font-size:3rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+  .score-num small{font-size:1.2rem;font-weight:600;color:#bfe8e2}
+  .bar{height:16px;background:rgba(255,255,255,.2);border-radius:999px;margin-top:1rem;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#fbbf24,#34d399);transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+  .score-note{margin-top:.7rem;font-size:.92rem;color:#d6efeb}
+  .section{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:1.2rem 1.3rem;margin-bottom:1rem}
+  .section h3{font-size:1.05rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem;color:var(--brand-dark)}
+  .section h3 .ic{font-size:1.2rem}
+  .section ul{list-style:none;display:grid;gap:.5rem}
+  .section li{position:relative;padding-left:1.4rem}
+  .section li::before{content:"";position:absolute;left:0;top:.55em;width:.55rem;height:.55rem;border-radius:50%;background:var(--accent)}
+  .price{font-size:1.9rem;font-weight:800;color:var(--brand)}
+  .price small{font-size:1rem;color:var(--muted);font-weight:600}
+  .muted{color:var(--muted);font-size:.92rem}
+  .grid2{display:grid;gap:1rem}
+  @media(min-width:700px){.grid2{grid-template-columns:1fr 1fr}}
+  .report-actions{display:flex;flex-direction:column;gap:.7rem;margin-top:1.2rem}
+  .report-actions .btn{width:100%}
+  @media(min-width:600px){.report-actions{flex-direction:row}.report-actions .btn{flex:1}}
+  .success{
+    display:none;margin-top:1rem;background:#ecfdf3;border:1px solid #a7e3bd;color:var(--ok);
+    padding:1rem 1.1rem;border-radius:12px;font-weight:600;
+  }
+  .success.show{display:block;animation:fadeUp .4s both}
+  .disclaimer{font-size:.78rem;color:var(--muted);text-align:center;margin-top:1.4rem}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SCREEN 1: WELCOME ============ -->
+<div id="screen-welcome" class="screen active" aria-label="Welcome">
+  <div class="hero">
+    <div class="logo">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19 9 8l4 6 3-4 5 9z"/><circle cx="17" cy="5" r="1.6" fill="currentColor"/></svg>
+      </span>
+      AndesTrade AI
+    </div>
+
+    <div class="hero-body">
+      <span class="eyebrow">Your AI-Powered Global Trade Department</span>
+      <h1>Find your next <span>export market</span> with AI.</h1>
+      <p class="tagline">Find your next export market with AI.</p>
+      <p class="sub">AndesTrade AI helps small and mid-sized businesses export confidently, without hiring an in-house trade team.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" id="startBtn" type="button">Start Analysis &rarr;</button>
+      </div>
+      <div class="hero-points">
+        <div><b>Market scoring</b>See which markets fit your product best.</div>
+        <div><b>Buyer insights</b>Know who to sell to and at what price.</div>
+        <div><b>Export checklist</b>Documents and shipping, in one place.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2: PRODUCT FORM ============ -->
+<div id="screen-form" class="screen" aria-label="Product information">
+  <div class="topbar">
+    <div class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19 9 8l4 6 3-4 5 9z"/></svg></span>AndesTrade AI</div>
+    <span class="step">Step 1 of 3</span>
+  </div>
+  <div class="page">
+    <button class="back-link" type="button" id="backToWelcome">&larr; Back</button>
+    <h2>Tell us about your product</h2>
+    <p class="lead">We'll use this to build your export opportunity report.</p>
+
+    <form id="productForm" class="card" novalidate>
+      <div class="field">
+        <label for="productName">Product Name</label>
+        <input type="text" id="productName" name="productName" value="Premium Dark Chocolate" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="productCategory">Product Category</label>
+        <input type="text" id="productCategory" name="productCategory" value="Food Products" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="countryOrigin">Country of Origin</label>
+        <input type="text" id="countryOrigin" name="countryOrigin" value="Peru" autocomplete="off" required>
+      </div>
+      <div class="field">
+        <label for="targetMarket">Target Market</label>
+        <input type="text" id="targetMarket" name="targetMarket" value="United States" autocomplete="off" required>
+      </div>
+
+      <p class="error" id="formError" role="alert" aria-live="assertive">Please enter all required fields.</p>
+
+      <div class="form-actions">
+        <button class="btn btn-brand btn-lg" type="submit">Generate Analysis</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: PROCESSING (SIMULATED) ============ -->
+<div id="screen-processing" class="screen" aria-label="Processing">
+  <div class="proc">
+    <div class="spinner" aria-hidden="true"></div>
+    <h2 id="procText" aria-live="polite">Analyzing market opportunities...</h2>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="procBar"></i></div>
+    <p>Our AI is reviewing demand, competition, pricing and trade requirements.</p>
+    <ul class="proc-steps" id="procSteps">
+      <li>Scanning demand signals</li>
+      <li>Matching buyer profiles</li>
+      <li>Estimating pricing &amp; logistics</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ SCREEN 4: REPORT (SIMULATED) ============ -->
+<div id="screen-report" class="screen" aria-label="Export opportunity report">
+  <div class="topbar">
+    <div class="logo"><span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19 9 8l4 6 3-4 5 9z"/></svg></span>AndesTrade AI</div>
+    <span class="step">Step 3 of 3</span>
+  </div>
+  <div class="page">
+    <div class="report-head">
+      <h2>Export Opportunity Report</h2>
+      <p class="muted" id="reportSubtitle"></p>
+    </div>
+    <div class="chips" id="reportChips"></div>
+
+    <div class="score-card">
+      <div class="score-top">
+        <span>Export Opportunity Score</span>
+        <div class="score-num"><span id="scoreNum">0</span><small>/100</small></div>
+      </div>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="87"><i id="scoreBar"></i></div>
+      <p class="score-note" id="scoreNote"></p>
+    </div>
+
+    <div class="section">
+      <h3><span class="ic">🎯</span> Recommended Customer Segments</h3>
+      <ul>
+        <li>Specialty retail stores</li>
+        <li>Gourmet supermarkets</li>
+        <li>Online premium food retailers</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3><span class="ic">💲</span> Suggested Retail Pricing</h3>
+      <div class="price">$6&ndash;8 <small id="priceUnit">per bar</small></div>
+      <p class="muted" id="priceNote"></p>
+    </div>
+
+    <div class="grid2">
+      <div class="section">
+        <h3><span class="ic">🤝</span> Potential Distributors / Buyer Types</h3>
+        <ul>
+          <li>Specialty food importers</li>
+          <li>Gourmet &amp; natural-food distributors</li>
+          <li>Premium e-commerce marketplaces</li>
+          <li>Boutique and independent grocers</li>
+        </ul>
+      </div>
+      <div class="section">
+        <h3><span class="ic">🚢</span> Shipping Recommendations</h3>
+        <ul>
+          <li>Start with air freight or LCL sea freight for first orders</li>
+          <li>Move to full-container sea freight as volumes grow</li>
+          <li>Use temperature-controlled packaging if the product is heat-sensitive</li>
+          <li>Quote on Incoterms such as FOB or CIF to keep costs clear</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3><span class="ic">📄</span> Required Documentation</h3>
+      <ul>
+        <li>Commercial invoice</li>
+        <li>Certificate of origin</li>
+        <li>Shipping documentation</li>
+      </ul>
+    </div>
+
+    <div class="report-actions">
+      <button class="btn btn-brand" type="button" id="acceptBtn">Accept Report</button>
+      <button class="btn btn-ghost" type="button" id="reviseBtn">Revise Inputs</button>
+    </div>
+    <div class="success" id="successMsg" role="status">✅ Report accepted! Your export opportunity report has been saved and is ready to share with your team.</div>
+
+    <p class="disclaimer">Prototype report: results are simulated for demonstration purposes.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var screens = {
+    welcome: document.getElementById('screen-welcome'),
+    form: document.getElementById('screen-form'),
+    processing: document.getElementById('screen-processing'),
+    report: document.getElementById('screen-report')
+  };
+  var inputs = ['productName', 'productCategory', 'countryOrigin', 'targetMarket']
+    .map(function (id) { return document.getElementById(id); });
+  var formError = document.getElementById('formError');
+  var procTimer = null, procRAF = null, textTimer = null;
+
+  /* ---- Screen switching (show/hide with fade) ---- */
+  function show(name) {
+    Object.keys(screens).forEach(function (k) { screens[k].classList.remove('active'); });
+    screens[name].classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ---- Screen 1 -> 2 ---- */
+  document.getElementById('startBtn').addEventListener('click', function () {
+    show('form');
+    inputs[0].focus({ preventScroll: true });
+  });
+  document.getElementById('backToWelcome').addEventListener('click', function () { show('welcome'); });
+
+  /* ---- Screen 2: validation ---- */
+  function clearInvalid() {
+    formError.classList.remove('show');
+    inputs.forEach(function (i) { i.classList.remove('invalid'); });
+  }
+  inputs.forEach(function (i) {
+    i.addEventListener('input', function () {
+      i.classList.remove('invalid');
+      if (inputs.every(function (x) { return x.value.trim(); })) formError.classList.remove('show');
+    });
+  });
+
+  document.getElementById('productForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearInvalid();
+    var firstBad = null;
+    inputs.forEach(function (i) {
+      if (!i.value.trim()) {
+        i.classList.add('invalid');
+        if (!firstBad) firstBad = i;
+      }
+    });
+    if (firstBad) {
+      // restart animation so repeated failures still shake
+      void formError.offsetWidth;
+      formError.classList.add('show');
+      firstBad.focus();
+      return;
+    }
+    startProcessing();
+  });
+
+  /* ---- Screen 3: simulated AI processing (3 seconds) ---- */
+  function startProcessing() {
+    show('processing');
+    var DURATION = 3000;
+    var bar = document.getElementById('procBar');
+    var text = document.getElementById('procText');
+    var stepEls = document.querySelectorAll('#procSteps li');
+    var start = performance.now();
+
+    text.textContent = 'Analyzing market opportunities...';
+    bar.style.width = '0%';
+    stepEls.forEach(function (li) { li.classList.remove('on'); });
+
+    clearTimeout(procTimer); clearTimeout(textTimer); cancelAnimationFrame(procRAF);
+
+    function tick(now) {
+      var pct = Math.min(100, ((now - start) / DURATION) * 100);
+      bar.style.width = pct + '%';
+      bar.parentNode.setAttribute('aria-valuenow', Math.round(pct));
+      stepEls.forEach(function (li, idx) {
+        if (pct >= idx * 33) li.classList.add('on');
+      });
+      if (pct < 100) procRAF = requestAnimationFrame(tick);
+    }
+    procRAF = requestAnimationFrame(tick);
+
+    textTimer = setTimeout(function () {
+      text.textContent = 'Analyzing global market opportunities...';
+    }, 1500);
+
+    procTimer = setTimeout(function () {
+      buildReport();
+      show('report');
+      animateScore(87);
+    }, DURATION);
+  }
+
+  /* ---- Screen 4: dynamic report ---- */
+  function buildReport() {
+    var name = inputs[0].value.trim();
+    var cat = inputs[1].value.trim();
+    var origin = inputs[2].value.trim();
+    var market = inputs[3].value.trim();
+
+    document.getElementById('reportSubtitle').innerHTML =
+      'Prepared for <b>' + esc(name) + '</b> exporting from <b>' + esc(origin) + '</b> to <b>' + esc(market) + '</b>.';
+
+    document.getElementById('reportChips').innerHTML =
+      [name, cat, origin + ' → ' + market].map(function (c) {
+        return '<span class="chip">' + esc(c) + '</span>';
+      }).join('');
+
+    document.getElementById('scoreNote').textContent =
+      'Strong fit: ' + market + ' shows high demand for ' + cat.toLowerCase() +
+      ' from ' + origin + ', with room for premium positioning of ' + name + '.';
+
+    var isBar = /chocolate|bar/i.test(name);
+    document.getElementById('priceUnit').textContent = isBar ? 'per bar' : 'per unit';
+    document.getElementById('priceNote').textContent =
+      'Estimated shelf price range for ' + name + ' in ' + market + ' at premium retail.';
+
+    document.getElementById('successMsg').classList.remove('show');
+    document.getElementById('acceptBtn').disabled = false;
+  }
+
+  function animateScore(target) {
+    var num = document.getElementById('scoreNum');
+    var bar = document.getElementById('scoreBar');
+    bar.style.width = '0%';
+    num.textContent = '0';
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { bar.style.width = target + '%'; });
+    });
+    var t0 = performance.now(), dur = 1200;
+    (function step(now) {
+      var p = Math.min(1, (now - t0) / dur);
+      num.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  /* ---- Report actions ---- */
+  document.getElementById('acceptBtn').addEventListener('click', function () {
+    document.getElementById('successMsg').classList.add('show');
+    this.disabled = true;
+    document.getElementById('successMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // Screen 5: revision workflow – back to form with data kept
+  document.getElementById('reviseBtn').addEventListener('click', function () {
+    clearInvalid();
+    show('form');
+    inputs[0].focus({ preventScroll: true });
+  });
+})();
+</script>
+
+<!--
+==========================================================
+ANDESTRADE AI – FEATURE STATUS
+==========================================================
+LIVE features:
+  Navigation, Data entry forms, Input validation, Revision workflow
+
+SIMULATED features:
+  AI-generated export analysis, Buyer recommendations, Market scoring, Pricing analysis
+
+PLANNED:
+  Real-time buyer database, Live customs integration, Automated document filing, AI negotiation assistant
+==========================================================
+-->
+</body>
+</html>
